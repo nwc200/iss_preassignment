@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bggns
+  labels:
+    name: bgg
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bggns-cm
+  namespace: bggns
+  labels:
+    name: bgg
+data:
+  db_user: root
+  db_host: bggns-svc.bggns.svc.cluster.local
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bggns-secret
+  namespace: bggns
+  labels:
+    name: bgg
+data:
+  db_password: Y2hhbmdlaXQ=

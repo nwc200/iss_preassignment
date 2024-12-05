@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dov-pod
+  namespace: myns
+  labels:
+    app: dov
+
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: dov
+      env: test
+  template:
+    metadata:
+      name: dov-pod
+      namespace: myns
+      labels:
+        app: dov
+        env: test
+
+    spec:
+      containers:
+        - name: dov-container
+          image: nwc200/myapp@sha256:f72a4b8fd6f72f41f66c37fb764407f6db76d02470f989fe63b99a1a63f4c9d7
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: INSTANCE_NAME
+              value: "my_dov_bear"
+            - name: INSTANCE_HASH
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dov-svc
+  namespace: myns
+  labels:
+    app: dov
+spec:
+  type: ClusterIP
+  selector:
+    app: dov
+    env: test
+  ports:
+    - name: web
+      port: 8080
+      targetPort: 3000
